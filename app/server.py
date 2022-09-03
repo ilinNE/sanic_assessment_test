@@ -1,15 +1,21 @@
 import logging
 import random 
+from pathlib import Path
 
 from models import Users, Bill
 from sanic import Sanic, response
-
 from tortoise.contrib.sanic import register_tortoise
+
+from api import api
+from middlwares import is_authenticated, extract_user_info
 
 logging.basicConfig(level=logging.DEBUG)
 
-app = Sanic(__name__)
-
+config = Path(Path(__file__).parent, 'config.py')
+app = Sanic("TestApp")
+app.update_config(config)
+app.register_middleware(is_authenticated, "request")
+app.register_middleware(extract_user_info, "request")
 
 @app.route("/")
 async def list_all(request):
@@ -22,11 +28,7 @@ async def add_user(request):
     user: Users = await Users.create(login=str(random.randint(1,200)), password="123456")
     return response.json(str(user))
 
-@app.route("/bill")
-async def add_bill(request):
-    user = await Users.first()
-    bills = await user.bills.all().values()
-    return response.json(bills)
+app.blueprint(api)
 
 
 register_tortoise(
@@ -35,4 +37,4 @@ register_tortoise(
 
 
 if __name__ == "__main__":
-    app.run(port=5000, auto_reload=True)
+    app.run(port=5000, workers=1, auto_reload=True)

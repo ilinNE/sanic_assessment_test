@@ -1,4 +1,3 @@
-from email.policy import default
 from tortoise import Model, fields
 
 
@@ -11,6 +10,9 @@ class Users(Model):
 
     def __str__(self):
         return f"User {self.id}: {self.login}"
+    
+    def to_dict(self):
+        return {"id": self.id, "login":self.login, "is_active": self.is_active, "is_admin": self.is_admin} 
 
 
 class Product(Model):

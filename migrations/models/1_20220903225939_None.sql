@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS "product" (
     "description" TEXT NOT NULL,
     "price" DECIMAL(12,2) NOT NULL
 );
-CREATE TABLE IF NOT EXISTS "user" (
+CREATE TABLE IF NOT EXISTS "users" (
     "id" SERIAL NOT NULL PRIMARY KEY,
     "login" VARCHAR(32) NOT NULL UNIQUE,
     "password" VARCHAR(32) NOT NULL,
@@ -14,14 +14,14 @@ CREATE TABLE IF NOT EXISTS "user" (
 );
 CREATE TABLE IF NOT EXISTS "bill" (
     "id" SERIAL NOT NULL PRIMARY KEY,
-    "balance" DECIMAL(15,2) NOT NULL,
-    "owner_id" INT NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE
+    "balance" DECIMAL(15,2) NOT NULL  DEFAULT 0,
+    "owner_id" INT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS "transaction" (
     "id" SERIAL NOT NULL PRIMARY KEY,
     "amount" DECIMAL(15,2) NOT NULL,
     "bill_id" INT NOT NULL REFERENCES "bill" ("id") ON DELETE CASCADE,
-    "owner_id" INT NOT NULL REFERENCES "user" ("id") ON DELETE CASCADE
+    "owner_id" INT NOT NULL REFERENCES "users" ("id") ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS "aerich" (
     "id" SERIAL NOT NULL PRIMARY KEY,
