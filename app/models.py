@@ -24,6 +24,15 @@ class Product(Model):
     def __str__(self):
         return f"Product {self.id}: {self.label}"
 
+    def to_dict(self):
+        product_as_dict = {
+            "id": self.id,
+            "label": self.label,
+            "price": self.price,
+            "desctiption": self.description
+        }
+        return product_as_dict
+
 
 class Bill(Model):
     id = fields.IntField(pk=True)
@@ -33,6 +42,13 @@ class Bill(Model):
         on_delete=fields.CASCADE
     )
     balance = fields.DecimalField(max_digits=15, decimal_places=2, default=0)
+
+    def to_dict(self):
+        bill_as_dict = {
+            "bill id:": self.id,
+            "balance:": self.balance
+        }
+        return bill_as_dict
 
     def  __str__(self):
         return f"Bill {self.id}"
@@ -52,4 +68,9 @@ class Transaction(Model):
     )
     amount = fields.DecimalField(max_digits=15, decimal_places=2)
 
-    
+    def to_dict(self):
+        transaction_as_dict = {
+            "transaction id": self.id,
+            "amount": self.amount
+        }
+        return transaction_as_dict
