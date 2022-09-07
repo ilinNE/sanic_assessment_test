@@ -1,18 +1,20 @@
 from sanic import Blueprint, json
 
 from models import Product, Bill
+from permissions import is_authenticated, admin_only
+
 products = Blueprint("products", url_prefix="/")
-product = Blueprint("product", url_prefix="/")
-buy_product = Blueprint("buy_product", url_prefix="/buy")
-product_group = Blueprint.group(buy_product, product, url_prefix="/<product_id:int>")
-products_group = Blueprint.group(product_group, products, url_prefix="/products")
+product = Blueprint("product", url_prefix="/<product_id:int>")
+products_group = Blueprint.group(product, products, url_prefix="/products")
 
 @products.get("/")
+@is_authenticated
 async def get_products(request):
     products = await Product.all()
     return json({"All products": [product.to_dict() for product in products]})
 
 @products.post("/")
+@admin_only
 async def create_product(request):
     label = request.json.get('label')
     price = request.json.get('price')
@@ -25,11 +27,15 @@ async def create_product(request):
     return json({"Product created": new_product.to_dict()}, status=201)
 
 @product.get("/")
+@is_authenticated
 async def get_product(request, product_id):
     product = await Product.get(id=product_id)
-    return json({f"Product {product_id}": product.to_dict()})
+    return json({
+        "product": product.to_dict()
+    })
 
-@buy_product.post("/")
+@product.post("/buy_product")
+@is_authenticated
 async def buy_product(request, product_id):
     bill_id = request.json.get('bill')
     product = await Product.get(id=product_id)

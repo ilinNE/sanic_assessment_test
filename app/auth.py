@@ -17,7 +17,7 @@ def check_token(request):
     else:
         return True
 
-def extract_user_info_from_token(request):
+def parse_token(request):
     return jwt.decode(
             request.token, request.app.config.SECRET, algorithms=["HS256"]
         )

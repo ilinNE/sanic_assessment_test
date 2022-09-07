@@ -7,15 +7,13 @@ from sanic import Sanic, response
 from tortoise.contrib.sanic import register_tortoise
 
 from api import api
-from middlwares import is_authenticated, extract_user_info
-
+from middlwares import authentication
 logging.basicConfig(level=logging.DEBUG)
 
 config = Path(Path(__file__).parent, 'config.py')
 app = Sanic("TestApp")
 app.update_config(config)
-app.register_middleware(is_authenticated, "request")
-app.register_middleware(extract_user_info, "request")
+app.register_middleware(authentication, "request")
 
 @app.route("/")
 async def list_all(request):
@@ -37,4 +35,4 @@ register_tortoise(
 
 
 if __name__ == "__main__":
-    app.run(port=5000, workers=1, auto_reload=True)
+    app.run(port=5000, workers=4, auto_reload=True)

@@ -1,3 +1,4 @@
+from email.policy import default
 from tortoise import Model, fields
 
 
@@ -7,6 +8,7 @@ class Users(Model):
     password = fields.CharField(max_length=32)
     is_active = fields.BooleanField(default=False)
     is_admin= fields.BooleanField(default=False)
+    activation_link = fields.CharField(max_length=64, default='', blank=True)
 
     def __str__(self):
         return f"User {self.id}: {self.login}"
